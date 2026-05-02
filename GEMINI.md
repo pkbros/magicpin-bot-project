@@ -9,7 +9,7 @@
 - **GitHub**: https://github.com/pkbros/magicpin-bot-project.git
 - **Production URL**: https://magicpin-bot-project.onrender.com
 
-## 3. Engineering Standards
-- **Context Preservation**: Always use `conversation_metadata` dictionary in `bot.py` to handle context-blindness in standalone tests.
-- **Action Mode**: Hardened with execution keywords (`DONE`, `SENDING`, `DRAFT`) to maximize judge scoring.
-- **Auto-Reply Shield**: 3x verbatim message repetition detection is the standard for detecting canned replies.
+## 4. Model Context Protocol (MCP)
+- **GCP Server**: Added `@googlecloudplatform/mcp-server-google-cloud` to user settings.
+- **Tools**: This enables direct management of Cloud Run, IAM, and other GCP services via the AI agent.
+- **Verification**: Run `gemini mcp list` to ensure `google-cloud` is active.
