@@ -7,7 +7,7 @@
 
 ## 2. Remote Repository & Deployment
 - **GitHub**: https://github.com/pkbros/magicpin-bot-project.git
-- **Production URL**: https://magicpin-bot-project.onrender.com
+- **Production URL**: https://magicpin-vera-bot-700751489270.asia-southeast1.run.app
 
 ## 4. Model Context Protocol (MCP)
 - **GCP Server**: Added `@googlecloudplatform/mcp-server-google-cloud` to user settings.

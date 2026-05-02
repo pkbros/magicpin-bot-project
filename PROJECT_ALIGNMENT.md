@@ -58,7 +58,8 @@ Submissions are evaluated on 5 dimensions (0-10 each, 50 total):
 | **Engagement** | 7/10 | +2 (Social Proof & Loss Aversion) |
 | **AVERAGE** | **36/50 (72%)** | **+13 Total** |
 
-### Final Status: [READY FOR GCP MIGRATION]
+### Final Status: [READY FOR SUBMISSION]
+- **GCP Migration**: [COMPLETE] Deployed to Cloud Run (Singapore) using credits.
 - **Dataset Expansion**: [COMPLETE] Full 50 MX / 200 CX / 100 Triggers generated.
 - **Official Submission**: [GENERATED] `submission.jsonl` contains 30 high-quality test pairs.
 - **Git Sync**: [PUSHED] V1.0 live at `pkbros/magicpin-bot-project`.
