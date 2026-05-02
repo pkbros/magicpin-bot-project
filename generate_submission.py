@@ -3,7 +3,7 @@ import requests
 import time
 from pathlib import Path
 
-BOT_URL = "http://localhost:8083"
+BOT_URL = "https://magicpin-vera-bot-700751489270.asia-southeast1.run.app"
 DATASET_DIR = Path("dataset")
 OUTPUT_FILE = "submission.jsonl"
 
