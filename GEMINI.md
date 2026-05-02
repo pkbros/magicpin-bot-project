@@ -5,8 +5,9 @@
 - **LLM Provider**: Google Gemini (REST API preferred for stability).
 - **Primary Model**: `gemini-3.1-flash-lite-preview` (Fastest and most cost-effective for 2026 era).
 
-## 2. Remote Repository
+## 2. Remote Repository & Deployment
 - **GitHub**: https://github.com/pkbros/magicpin-bot-project.git
+- **Production URL**: https://magicpin-bot-project.onrender.com
 
 ## 3. Engineering Standards
 - **Context Preservation**: Always use `conversation_metadata` dictionary in `bot.py` to handle context-blindness in standalone tests.
