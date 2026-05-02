@@ -385,14 +385,24 @@ class DatasetLoader:
                 ("customers_seed.json", "customers", "customer_id"),
                 ("triggers_seed.json", "triggers", "id")
             ]:
-                path = self.dataset_dir / name
-                if path.exists():
-                    data = json.load(open(path))
+                # 1. Load from seed file
+                seed_path = self.dataset_dir / name
+                if seed_path.exists():
+                    data = json.load(open(seed_path))
                     items = data.get(container, data.get(container.rstrip("s"), []))
                     storage = getattr(self, container)
                     for item in items:
                         if key in item:
                             storage[item[key]] = item
+                
+                # 2. Load from expanded directory if it exists
+                dir_path = self.dataset_dir / container
+                if dir_path.exists() and dir_path.is_dir():
+                    storage = getattr(self, container)
+                    for f in dir_path.glob("*.json"):
+                        data = json.load(open(f))
+                        if key in data:
+                            storage[data[key]] = data
             return True
         except Exception as e:
             print_fail(f"Dataset load error: {e}")

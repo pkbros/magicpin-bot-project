@@ -171,7 +171,7 @@ async def healthz():
 
 @app.get("/v1/metadata")
 async def metadata():
-    return {"team_name": "Team Gemini CLI", "model": "Gemini 1.5 Flash", "version": "2.0.0"}
+    return {"team_name": "Team Gemini CLI", "model": "gemini-3.1-flash-lite-preview", "version": "2.0.0"}
 
 @app.post("/v1/context")
 async def push_context(body: ContextPush):
