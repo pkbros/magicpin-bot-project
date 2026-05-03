@@ -170,7 +170,7 @@ async def healthz():
 
 @app.get("/v1/metadata")
 async def metadata():
-    return {"team_name": "Team Gemini CLI", "model": "gemini-3.1-flash-lite-preview", "version": "2.2.0"}
+    return {"team_name": "Team Gemini CLI", "model": "gemini-3.1-flash-lite-preview", "version": "2.3.0"}
 
 @app.post("/v1/context")
 async def push_context(body: ContextPush):
@@ -222,38 +222,68 @@ async def reply(body: ReplyBody):
 
     cat_payload = contexts.get(("category", m_payload.get("category_slug") if m_payload else None), {}).get("payload") if m_payload else None
     last_msg = body.message.lower().strip()
+    role = body.from_role
     
-    commitment_keywords = ["yes", "ok", "sure", "go ahead", "let's do it", "interested", "how", "send", "draft", "update", "confirm", "proceed"]
+    commitment_keywords = ["yes", "ok", "sure", "go ahead", "let's do it", "interested", "how", "send", "draft", "update", "confirm", "proceed", "book"]
     is_action_mode = any(kw in last_msg for kw in commitment_keywords)
     
-    if is_action_mode:
-        sys = f"""
-You are Vera in ACTION MODE. The merchant expressed clear interest.
-HISTORY: {json.dumps(history)}
-CONTEXT: Merchant: {json.dumps(m_payload)}, Category: {json.dumps(cat_payload)}
+    m_name = m_payload.get('identity', {}).get('name', 'the merchant') if m_payload else 'the merchant'
 
-TASK: DO NOT ask for interest again. Immediately PROVIDE the service.
-Use keywords like: "DONE", "SENDING", "DRAFT", "HERE IS THE LINK", "PROCEEDING".
-Switch from pitching to executing. Be brief and authoritative.
+    if role == "customer":
+        sys = f"""
+You are Vera, assisting '{m_name}'.
+CUSTOMER MESSAGE: "{body.message}"
+HISTORY: {json.dumps(history)}
+
+TASK: Help the customer fulfill their request (booking, info, etc.).
+STRICT RULE: Ground your response ONLY in the current conversation history. 
+Do NOT hallucinate tasks (like drafting Google posts) that were not explicitly discussed in this thread.
+Be helpful, professional, and very brief.
 
 FORMAT: Return JSON ONLY:
 {{
   "action": "send",
-  "body": "Your message executing the request (e.g. 'Done! I have drafted...', 'Sending the link now...')",
-  "rationale": "Execution mode triggered by merchant commitment."
+  "body": "Your response confirming or assisting the customer",
+  "rationale": "Customer service fulfillment based strictly on history."
+}}
+"""
+    elif is_action_mode:
+        sys = f"""
+You are Vera in ACTION MODE for '{m_name}'.
+HISTORY: {json.dumps(history)}
+CONTEXT: {json.dumps(m_payload)}
+
+TASK:
+1. Immediately EXECUTE the specific service requested in HISTORY.
+2. USE NUMBERS: Mention relevant stats from context (e.g. median CTR) to reinforce value.
+3. NO HALLUCINATIONS: Do NOT invent next steps (like social posts) unless explicitly requested in history.
+4. Be authoritative and concise.
+
+FORMAT: Return JSON ONLY:
+{{
+  "action": "send",
+  "body": "Your execution message (e.g. 'Done! I have...', 'Sending...')",
+  "rationale": "Action Mode: Strictly executing history-based task with context-grounding."
 }}
 """
     else:
         sys = f"""
-You are Vera. Continue the conversation.
+You are Vera, elite merchant assistant.
+MERCHANT MESSAGE: "{body.message}"
 HISTORY: {json.dumps(history)}
-If the merchant is not interested, end politely. If they are, move to action.
+CONTEXT: {json.dumps(m_payload)}
+
+TASK:
+1. Continue the conversation toward a high-value action.
+2. SPECIFICITY: Use at least one number from the CONTEXT in your reply.
+3. ENGAGEMENT: End with a clear, low-friction binary question or next step.
+4. If not interested, end politely.
 
 FORMAT: Return JSON ONLY:
 {{
   "action": "send" or "end",
   "body": "Your response message",
-  "rationale": "Decision based on merchant sentiment."
+  "rationale": "Driving engagement with specific data points."
 }}
 """
 
